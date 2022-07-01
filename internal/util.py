@@ -49,7 +49,7 @@ def getInfo(path):
     s = requests.Session()
     s.proxies.update(PROXY)
 
-    r = s.get(DLSITE_URL.format(c.id))
+    r = s.get(DLSITE_URL.format(c.id), timeout=5)
     if r.status_code != 200:
         raise RuntimeError("status_code isn't 200")
 
@@ -78,6 +78,12 @@ def getInfo(path):
 
 def convert(inputPath, outputPath):
     outputType = getFileExt(outputPath)
+
+    if outputType in ["mp3", "flac"]:
+        os.makedirs(os.path.dirname(outputPath), exist_ok=True)
+    else:
+        raise RuntimeError("invalid outputType")
+
     if outputType == "mp3":
         p = subprocess.Popen(r'ffmpeg -y -i "{0}" -map_metadata -1 -vn -c:a libmp3lame -b:a {1} "{2}"'.format(inputPath, MP3_BITRATE, outputPath),
                              stdout=subprocess.DEVNULL,
@@ -88,13 +94,11 @@ def convert(inputPath, outputPath):
                              stdout=subprocess.DEVNULL,
                              stderr=subprocess.STDOUT)
         p.wait()
-    else:
-        raise RuntimeError("invalid outputType")
 
     return
 
 
-def cropCover(imageData):
+def cropCover(imageData, resize=0):
     image = Image.open(io.BytesIO(imageData))
 
     width, height = image.size
@@ -104,6 +108,8 @@ def cropCover(imageData):
     bottom = height
 
     image = image.crop((left, top, right, bottom))
+    if resize:
+        image = image.resize((resize, resize), resample=Image.BICUBIC)
 
     coverData = io.BytesIO()
     image.save(coverData, format="JPEG")
