@@ -13,6 +13,8 @@ class Config(object):
         self.audioMap = []
         self.imageMap = []
 
+        return
+
     def addAudioMap(self, aid, title, ignore=False, source=[]):
         self.audioMap.append({
             "aid": aid,
@@ -34,3 +36,14 @@ class Config(object):
     def write(self, path):
         with open(path, 'w', encoding='utf-8') as f:
             json.dump(self.__dict__, f, ensure_ascii=False)
+
+        return
+
+    def read(self, path):
+        with open(path, 'r', encoding='utf-8') as f:
+            d = json.load(f)
+
+        for k in d:
+            setattr(self, k, d[k])
+
+        return

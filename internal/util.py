@@ -1,9 +1,12 @@
 import os
 import re
+import io
+import subprocess
 from bs4 import BeautifulSoup
+from PIL import Image
 
 import requests
-import config
+from internal import config
 
 ID_REGEX = r"RJ(.*)(?=-)"               # for `RJ000000-xxxxx`
 # ID_REGEX = r"(?<=\[)RJ(.*)(?=\])"     # for `[RJ000000]xxxxx`
@@ -12,6 +15,8 @@ PROXY = {
     "http_proxy": "http://127.0.0.1:7890"
 }
 DLSITE_URL = "https://www.dlsite.com/home/work/=/product_id/{0}.html"
+
+MP3_BITRATE = "320k"
 
 
 def getFileExt(filename):
@@ -69,3 +74,38 @@ def getInfo(path):
         c.dlImage.append("https:" + i["data-src"])
 
     return c
+
+
+def convert(inputPath, outputPath):
+    outputType = getFileExt(outputPath)
+    if outputType == "mp3":
+        p = subprocess.Popen(r'ffmpeg -y -i "{0}" -map_metadata -1 -vn -c:a libmp3lame -b:a {1} "{2}"'.format(inputPath, MP3_BITRATE, outputPath),
+                             stdout=subprocess.DEVNULL,
+                             stderr=subprocess.STDOUT)
+        p.wait()
+    elif outputType == "flac":
+        p = subprocess.Popen(r'ffmpeg -y -i "{0}" -map_metadata -1 -vn -c:a flac "{1}"'.format(inputPath, outputPath),
+                             stdout=subprocess.DEVNULL,
+                             stderr=subprocess.STDOUT)
+        p.wait()
+    else:
+        raise RuntimeError("invalid outputType")
+
+    return
+
+
+def cropCover(imageData):
+    image = Image.open(io.BytesIO(imageData))
+
+    width, height = image.size
+    left = (width - height)/2
+    top = 0
+    right = (width + height)/2
+    bottom = height
+
+    image = image.crop((left, top, right, bottom))
+
+    coverData = io.BytesIO()
+    image.save(coverData, format="JPEG")
+
+    return coverData.getvalue()
