@@ -57,7 +57,7 @@ def getInfo(path):
 
     # Title
     rawTitle = soup.select("#work_name")[0].contents[0]
-    c.title = re.sub(r'【(.*?)】', '', rawTitle)     # maybe...
+    c.title = filterFilename(re.sub(r'【(.*?)】', '', rawTitle))     # maybe...
 
     # Circle
     c.circle = soup.select("#work_maker .maker_name a")[0].contents[0]
@@ -115,3 +115,23 @@ def cropCover(imageData, resize=0):
     image.save(coverData, format="JPEG")
 
     return coverData.getvalue()
+
+def filterFilename(s):
+    # for Windows
+    filter = {
+        '\\':'＼',
+        '/':'／',
+        ':':'：',
+        '*':'＊',
+        '?':'？',
+        '"':'\'\'',
+        '<':'＜',
+        '>':'＞',
+        '|':'｜'
+    }
+    l = list(s)
+    for i, j in enumerate(l):
+        if j in filter:
+            l[i] = filter[j]
+
+    return ''.join(l)

@@ -1,4 +1,5 @@
 import mutagen.id3
+import mutagen.mp3
 import mutagen.flac
 
 ID3_V2_VERSION = 3     # Groove does't support ID3v2.4
@@ -14,20 +15,22 @@ class Meta(object):
         self.coverData = b''
 
     def writeMp3(self, path):
-        audio = mutagen.id3.ID3(path)
-        audio.clear()
-        
-        audio.add(mutagen.id3.TIT2(encoding=3, text=self.title))
-        audio.add(mutagen.id3.TPE1(encoding=3, text='/'.join(self.artist)))
-        audio.add(mutagen.id3.TALB(encoding=3, text=self.album))
-        audio.add(mutagen.id3.TRCK(encoding=3, text=str(self.trackNum)))
-        audio.add(mutagen.id3.COMM(encoding=3, text=self.desc))
-        audio.add(mutagen.id3.APIC(
+        audio = mutagen.mp3.MP3(path)
+        if audio.tags is None:
+            audio.add_tags()
+        else:
+            audio.clear()
+        audio.tags["TIT2"] = mutagen.id3.TIT2(encoding=3, text=self.title)
+        audio.tags["TPE1"] = mutagen.id3.TPE1(encoding=3, text='/'.join(self.artist))
+        audio.tags["TALB"] = mutagen.id3.TALB(encoding=3, text=self.album)
+        audio.tags["TRCK"] = mutagen.id3.TRCK(encoding=3, text=str(self.trackNum))
+        audio.tags["COMM"] = mutagen.id3.COMM(encoding=3, text=self.desc)
+        audio.tags['APIC'] = mutagen.id3.APIC(
             encoding=3,
             mime='image/jpeg',
             type=3,
             data=self.coverData
-        ))
+        )
         audio.save(v2_version=ID3_V2_VERSION)
 
         return

@@ -1,11 +1,7 @@
 import operator
 import os
-from re import S
 import shutil
-from turtle import title
-from zoneinfo import available_timezones
 import fire
-from requests import request
 import requests
 from internal import util
 from internal import config
@@ -15,7 +11,7 @@ from internal import meta
 def gen(path):
     configPath = os.path.join(path, ".dlmeta.json")
     util.getInfo(path).write(configPath)
-    print("info: generated. at \"{0}\".".format(configPath))
+    print("info: meta config generated. at \"{0}\".".format(configPath))
 
 
 def convert(path, target="mp3", copy=True, output="./dlmeta-output"):
@@ -110,6 +106,11 @@ def addMeta(path, output="./dlmeta-output", coverPath=""):
             m.writeFlac(os.path.join(outputDir, convertMap[title]))
 
         trackNum = trackNum + 1
+
+def single(path, target="mp3", copy=True, output="./dlmeta-output", coverPath=""):
+    gen(path)
+    convert(path, target, copy, output)
+    addMeta(path, output, coverPath)
 
 
 if __name__ == '__main__':
