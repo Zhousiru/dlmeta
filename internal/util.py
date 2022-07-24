@@ -46,10 +46,7 @@ def getInfo(path):
             if fileType in ("png", "jpg"):
                 c.imageMap.append(os.path.join(dirpath, i))
 
-    s = requests.Session()
-    s.proxies.update(PROXY)
-
-    r = s.get(DLSITE_URL.format(c.id), timeout=5)
+    r = requests.get(DLSITE_URL.format(c.id), timeout=5, proxies=PROXY)
     if r.status_code != 200:
         raise RuntimeError("status_code isn't 200")
 
@@ -116,18 +113,19 @@ def cropCover(imageData, resize=0):
 
     return coverData.getvalue()
 
+
 def filterFilename(s):
     # for Windows
     filter = {
-        '\\':'＼',
-        '/':'／',
-        ':':'：',
-        '*':'＊',
-        '?':'？',
-        '"':'\'\'',
-        '<':'＜',
-        '>':'＞',
-        '|':'｜'
+        '\\': '＼',
+        '/': '／',
+        ':': '：',
+        '*': '＊',
+        '?': '？',
+        '"': '\'\'',
+        '<': '＜',
+        '>': '＞',
+        '|': '｜'
     }
     l = list(s)
     for i, j in enumerate(l):

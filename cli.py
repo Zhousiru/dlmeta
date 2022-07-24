@@ -79,7 +79,9 @@ def addMeta(path, output="./dlmeta-output", coverPath=""):
             coverData = f.read()
     else:
         print("info: downloading cover from DLsite...")
-        coverData = requests.get(c.dlImage[0], stream=True, timeout=10).content
+
+        coverData = requests.get(
+            c.dlImage[0], stream=True, timeout=10, proxies=util.PROXY).content
 
     coverData = util.cropCover(coverData, resize=800)
 
@@ -107,10 +109,31 @@ def addMeta(path, output="./dlmeta-output", coverPath=""):
 
         trackNum = trackNum + 1
 
+
 def single(path, target="mp3", copy=True, output="./dlmeta-output", coverPath=""):
     gen(path)
     convert(path, target, copy, output)
     addMeta(path, output, coverPath)
+
+
+def batch(input="./raw", output="./dlmeta-output", target="mp3", copy=True):
+    for i in os.listdir(input):
+        path = os.path.join(input, i)
+        metaPath = os.path.join(path, ".dlmeta.json")
+        c = config.Config()
+        isProcessed = False
+        try:
+            c.read(metaPath)
+            if os.path.exists(os.path.join(output, c.title)):
+                isProcessed = True
+        except:
+            isProcessed = False
+
+        if isProcessed:
+            print("info: \"{0}\": it has been processed. skip.".format(i))
+            continue
+
+        single(path, target=target, copy=copy)
 
 
 if __name__ == '__main__':
