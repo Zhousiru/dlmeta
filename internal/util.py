@@ -40,7 +40,8 @@ def getInfo(path):
                 try:
                     c.addAudioSource(aid, source=source)
                 except KeyError:
-                    c.addAudioMap(aid, aid, source=[source])
+                    c.addAudioMap(aid, aid)
+                    c.addAudioSource(aid, source=source)
 
             # image
             if fileType in ("png", "jpg"):

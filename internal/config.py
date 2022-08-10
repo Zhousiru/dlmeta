@@ -15,20 +15,20 @@ class Config(object):
 
         return
 
-    def addAudioMap(self, aid, title, ignore=False, source=[]):
+    def addAudioMap(self, aid, title, ignore=False):
         self.audioMap.append({
             "aid": aid,
             "title": title,
             "order": len(self.audioMap),
             "ignore": ignore,
-            "source": source
+            "source": []
         })
         return
 
-    def addAudioSource(self, aid, source):
+    def addAudioSource(self, aid, source, ignore=False):
         for i in self.audioMap:
             if i["aid"] == aid:
-                i["source"].append(source)
+                i["source"].append({"path": source, "ignore": ignore})
                 return
 
         raise KeyError("can't find spcified aid")

@@ -25,7 +25,7 @@ def convert(path, target="mp3", copy=True, output="./dlmeta-output"):
 
         available = {}
         for j in i["source"]:
-            available[util.getFileExt(j)] = j
+            if not j["ignore"]: available[util.getFileExt(j["path"])] = j["path"]
 
         if copy and (target in available):
             # copy raw
