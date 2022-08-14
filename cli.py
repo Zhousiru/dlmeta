@@ -34,7 +34,7 @@ def convert(path, target="mp3", copy=True, output="./dlmeta-output"):
                 output, c.title, i["title"]+"."+target)
 
             os.makedirs(os.path.dirname(outputPath), exist_ok=True)
-            shutil.copyfile(available[target], outputPath)
+            shutil.copyfile(os.path.join(path, available[target]), outputPath)
 
             continue
 
@@ -47,7 +47,7 @@ def convert(path, target="mp3", copy=True, output="./dlmeta-output"):
                 output, c.title, i["title"]+".mp3")
 
             os.makedirs(os.path.dirname(outputPath), exist_ok=True)
-            shutil.copyfile(available["mp3"], outputPath)
+            shutil.copyfile(os.path.join(path, available["mp3"]), outputPath)
 
             continue
 
@@ -62,7 +62,7 @@ def convert(path, target="mp3", copy=True, output="./dlmeta-output"):
             output, c.title, i["title"]+"."+target))
 
 
-def addMeta(path, output="./dlmeta-output", coverPath=""):
+def addMeta(path, output="./dlmeta-output"):
     c = config.Config()
     c.read(os.path.join(path, ".dlmeta.json"))
 
@@ -73,15 +73,15 @@ def addMeta(path, output="./dlmeta-output", coverPath=""):
         convertMap[os.path.splitext(i)[0]] = i
 
     coverData = b''
-    if coverPath:
-        print("info: use specified cover.")
-        with open(coverPath, "rb") as f:
+    if util.isLocal(c.albumArt):
+        print("info: use local cover.")
+        with open(c.albumArt, "rb") as f:
             coverData = f.read()
     else:
-        print("info: downloading cover from DLsite...")
+        print("info: downloading remote cover...")
 
         coverData = requests.get(
-            c.dlImage[0], stream=True, timeout=10, proxies=util.PROXY).content
+            c.albumArt, stream=True, timeout=10, proxies=util.PROXY).content
 
     coverData = util.cropCover(coverData, resize=800)
 
@@ -110,10 +110,10 @@ def addMeta(path, output="./dlmeta-output", coverPath=""):
         trackNum = trackNum + 1
 
 
-def single(path, target="mp3", copy=True, output="./dlmeta-output", coverPath=""):
+def single(path, target="mp3", copy=True, output="./dlmeta-output"):
     gen(path)
     convert(path, target, copy, output)
-    addMeta(path, output, coverPath)
+    addMeta(path, output)
 
 
 def batch(input="./raw", output="./dlmeta-output", target="mp3", copy=True):

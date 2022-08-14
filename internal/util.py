@@ -4,6 +4,7 @@ import io
 import subprocess
 from bs4 import BeautifulSoup
 from PIL import Image
+from urllib.parse import urlparse
 
 import requests
 from internal import config
@@ -17,6 +18,14 @@ PROXY = {
 DLSITE_URL = "https://www.dlsite.com/home/work/=/product_id/{0}.html"
 
 MP3_BITRATE = "320k"
+
+
+def isLocal(url):
+    parsed = urlparse(url)
+    if parsed.scheme in ('file', ''):
+        return os.path.exists(parsed)
+
+    return False
 
 
 def getFileExt(filename):
