@@ -30,6 +30,9 @@ def getRelPath(basePath, dirpath, filename):
 def getInfo(path):
     c = config.Config()
 
+    # Status
+    c.status = "ready"
+
     basename = os.path.basename(path)
     c.id = re.search(ID_REGEX, basename).group()
 
@@ -74,6 +77,9 @@ def getInfo(path):
     # DLsite images
     for i in soup.select(".product-slider-data div"):
         c.dlImage.append("https:" + i["data-src"])
+
+    # Album Art(Default)
+    c.albumArt = c.dlImage[0]
 
     return c
 
