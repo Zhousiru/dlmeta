@@ -23,6 +23,10 @@ def getFileExt(filename):
     return os.path.splitext(filename)[-1][1:]
 
 
+def getRelPath(basePath, dirpath, filename):
+    return os.path.relpath(os.path.join(dirpath, filename), basePath)
+
+
 def getInfo(path):
     c = config.Config()
 
@@ -36,7 +40,7 @@ def getInfo(path):
             # audio
             if fileType in ("wav", "flac", "mp3"):
                 aid = os.path.splitext(i)[0]
-                source = os.path.join(dirpath, i)
+                source = getRelPath(path, dirpath, i)
                 try:
                     c.addAudioSource(aid, source=source)
                 except KeyError:
@@ -45,7 +49,7 @@ def getInfo(path):
 
             # image
             if fileType in ("png", "jpg"):
-                c.imageMap.append(os.path.join(dirpath, i))
+                c.imageMap.append(getRelPath(path, dirpath, i))
 
     r = requests.get(DLSITE_URL.format(c.id), timeout=5, proxies=PROXY)
     if r.status_code != 200:
