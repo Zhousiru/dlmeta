@@ -25,7 +25,8 @@ def convert(path, target="mp3", copy=True, output="./dlmeta-output"):
 
         available = {}
         for j in i["source"]:
-            if not j["ignore"]: available[util.getFileExt(j["path"])] = j["path"]
+            if not j["ignore"]:
+                available[util.getFileExt(j["path"])] = j["path"]
 
         if copy and (target in available):
             # copy raw
@@ -114,6 +115,11 @@ def single(path, target="mp3", copy=True, output="./dlmeta-output"):
     gen(path)
     convert(path, target, copy, output)
     addMeta(path, output)
+    c = config.Config()
+    configPath = os.path.join(path, ".dlmeta.json")
+    c.read(configPath)
+    c.status = "done"
+    c.write(configPath)
 
 
 def batch(input="./raw", output="./dlmeta-output", target="mp3", copy=True):
