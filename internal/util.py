@@ -9,8 +9,8 @@ from urllib.parse import urlparse
 import requests
 from internal import config
 
-ID_REGEX = r"RJ(.*)(?=-)"               # for `RJ000000-xxxxx`
-# ID_REGEX = r"(?<=\[)RJ(.*)(?=\])"     # for `[RJ000000]xxxxx`
+ID_REGEX = r"RJ(.*?)(?=-)"               # for `RJ000000-xxxxx`
+# ID_REGEX = r"(?<=\[)RJ(.*?)(?=\])"     # for `[RJ000000]xxxxx`
 # ID_REGEX = r"RJ(.*)"                  # for `RJ000000`
 PROXY = {
     "http_proxy": "http://127.0.0.1:7890"
