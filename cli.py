@@ -3,9 +3,13 @@ import os
 import shutil
 import fire
 import requests
+import sys
 from internal import util
 from internal import config
 from internal import meta
+
+sys.stdout.reconfigure(encoding='utf-8')
+sys.stderr.reconfigure(encoding='utf-8')
 
 
 def gen(path):
