@@ -35,7 +35,7 @@ class Config(object):
 
     def write(self, path):
         with open(path, 'w', encoding='utf-8') as f:
-            json.dump(self.__dict__, f, ensure_ascii=False)
+            json.dump(self.__dict__, f, ensure_ascii=False, indent=4)
 
         return
 
