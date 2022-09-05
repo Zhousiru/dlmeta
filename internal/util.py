@@ -11,7 +11,7 @@ from internal import config
 
 ID_REGEX = r"RJ(.*?)(?=-)"               # for `RJ000000-xxxxx`
 # ID_REGEX = r"(?<=\[)RJ(.*?)(?=\])"     # for `[RJ000000]xxxxx`
-# ID_REGEX = r"RJ(.*)"                  # for `RJ000000`
+# ID_REGEX = r"RJ(.*)"                   # for `RJ000000`
 PROXY = {
     "http_proxy": "http://127.0.0.1:7890"
 }
@@ -23,7 +23,7 @@ MP3_BITRATE = "320k"
 def isLocal(url):
     parsed = urlparse(url)
     if parsed.scheme in ('file', ''):
-        return os.path.exists(parsed)
+        return True     # maybe?
 
     return False
 
