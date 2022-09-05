@@ -80,7 +80,8 @@ def addMeta(path, output="./dlmeta-output"):
     coverData = b''
     if util.isLocal(c.albumArt):
         print("info: use local cover.")
-        with open(c.albumArt, "rb") as f:
+        coverPath = os.path.join(path, c.albumArt)
+        with open(coverPath, "rb") as f:
             coverData = f.read()
     else:
         print("info: downloading remote cover...")
