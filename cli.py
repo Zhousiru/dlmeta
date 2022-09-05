@@ -18,9 +18,10 @@ def gen(path):
     print("info: meta config generated. at \"{0}\".".format(configPath))
 
 
-def convert(path, target="mp3", copy=True, output="./dlmeta-output"):
+def conv(path, target="mp3", copy=True, output="./dlmeta-output"):
     c = config.Config()
-    c.read(os.path.join(path, ".dlmeta.json"))
+    configPath = os.path.join(path, ".dlmeta.json")
+    c.read(configPath)
 
     for i in c.audioMap:
         if i["ignore"]:
@@ -66,11 +67,13 @@ def convert(path, target="mp3", copy=True, output="./dlmeta-output"):
         util.convert(source, os.path.join(
             output, c.title, i["title"]+"."+target))
 
+    addMeta(path, c, output)
+    
+    c.status = "done"
+    c.write(configPath)
 
-def addMeta(path, output="./dlmeta-output"):
-    c = config.Config()
-    c.read(os.path.join(path, ".dlmeta.json"))
 
+def addMeta(path, c, output="./dlmeta-output"):
     outputDir = os.path.join(
         output, c.title)
     convertMap = {}
@@ -116,36 +119,39 @@ def addMeta(path, output="./dlmeta-output"):
         trackNum = trackNum + 1
 
 
-def single(path, target="mp3", copy=True, output="./dlmeta-output"):
-    gen(path)
-    convert(path, target, copy, output)
-    addMeta(path, output)
-    c = config.Config()
-    configPath = os.path.join(path, ".dlmeta.json")
-    c.read(configPath)
-    c.status = "done"
-    c.write(configPath)
+# def single(path, target="mp3", copy=True, output="./dlmeta-output"):
+#     gen(path)
+#     convert(path, target, copy, output)
+#     addMeta(path, output)
+#     c = config.Config()
+#     configPath = os.path.join(path, ".dlmeta.json")
+#     c.read(configPath)
+#     c.status = "done"
+#     c.write(configPath)
 
 
-def batch(input="./raw", output="./dlmeta-output", target="mp3", copy=True):
-    for i in os.listdir(input):
-        path = os.path.join(input, i)
-        metaPath = os.path.join(path, ".dlmeta.json")
-        c = config.Config()
-        isProcessed = False
-        try:
-            c.read(metaPath)
-            if os.path.exists(os.path.join(output, c.title)):
-                isProcessed = True
-        except:
-            isProcessed = False
+# def batch(input="./raw", output="./dlmeta-output", target="mp3", copy=True):
+#     for i in os.listdir(input):
+#         path = os.path.join(input, i)
+#         metaPath = os.path.join(path, ".dlmeta.json")
+#         c = config.Config()
+#         isProcessed = False
+#         try:
+#             c.read(metaPath)
+#             if os.path.exists(os.path.join(output, c.title)):
+#                 isProcessed = True
+#         except:
+#             isProcessed = False
 
-        if isProcessed:
-            print("info: \"{0}\": it has been processed. skip.".format(i))
-            continue
+#         if isProcessed:
+#             print("info: \"{0}\": it has been processed. skip.".format(i))
+#             continue
 
-        single(path, target=target, copy=copy)
+#         single(path, target=target, copy=copy)
 
 
 if __name__ == '__main__':
-    fire.Fire()
+    fire.Fire({
+        'gen': gen,
+        'conv': conv
+    })

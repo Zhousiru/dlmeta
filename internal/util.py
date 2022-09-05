@@ -71,7 +71,8 @@ def getInfo(path):
 
     # Title
     rawTitle = soup.select("#work_name")[0].contents[0]
-    c.title = filterFilename(re.sub(r'【(.*?)】', '', rawTitle))     # maybe...
+    c.title = rawTitle
+    # c.title = filterFilename(re.sub(r'【(.*?)】', '', rawTitle))     # maybe...
 
     # Circle
     c.circle = soup.select("#work_maker .maker_name a")[0].contents[0]
