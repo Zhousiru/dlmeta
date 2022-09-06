@@ -64,11 +64,11 @@ def conv(path, target="mp3", copy=True, output="./dlmeta-output"):
         else:
             source = available["flac"]
 
-        util.convert(source, os.path.join(
+        util.convert(os.path.join(path, source), os.path.join(
             output, c.title, i["title"]+"."+target))
 
     addMeta(path, c, output)
-    
+
     c.status = "done"
     c.write(configPath)
 
