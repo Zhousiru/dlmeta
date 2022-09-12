@@ -119,6 +119,9 @@ def convert(inputPath, outputPath):
 def cropCover(imageData, resize=0):
     image = Image.open(io.BytesIO(imageData))
 
+    # RGBA to RGB
+    image = image.convert('RGB')
+
     width, height = image.size
     left = (width - height)/2
     top = 0
